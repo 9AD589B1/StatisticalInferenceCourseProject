@@ -1,0 +1,104 @@
+---
+title: 'Statistical Inference Course Project Part 2: Basic Inferential Data Analysis'
+author: "David Kochar"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+##Overview
+
+This report will perform exploratory data analysis from R's "ToothGrowth" data set, and also use hypothesis testing to compare tooth growth by supplement type and dose. 
+
+## Setup
+
+We will first prepare the workspace environment by setting global options, and installing and loading required libraries.
+
+### Set Global Options
+
+Establish global options for the report output
+
+```{r setupknitr}
+list.of.packages <- c("knitr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
+suppressWarnings ( suppressMessages ( library ( knitr ) ) )
+knitr::opts_chunk$set(fig.width=8, fig.height=4, fig.path='figures/StatisticalInferenceCourseProject/StatisticalInferenceCourseProjectPart1_', echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+### Prepare Workspace and Load Libraries
+
+Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary
+
+```{r load-packages}
+#Clear variables
+rm ( list = ls ( all = TRUE ) )
+#Get and set working directory
+setwd ( getwd ( ) )
+#Check installed status of requried packages, and install if necessary
+list.of.packages <- c( "ggplot2", "dplyr", "kableExtra" )
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
+suppressWarnings ( suppressMessages ( library ( ggplot2 ) ) )
+suppressWarnings ( suppressMessages ( library ( dplyr ) ) )
+suppressWarnings ( suppressMessages ( library ( kableExtra ) ) )
+```
+### Load Data
+```{r load-data}
+data ( ToothGrowth ) #load the ToothGrowth data set
+```
+
+##Exploratory Data Analysis
+
+Let's get a feel for our data set by determining the data types and any factor levels
+
+```{r describe-data}
+str ( ToothGrowth ) #load the ToothGrowth data set
+```
+It appears that "dose" is actually a categorical variable in this context. Let's determine if the values are discrete.
+
+```{r unique-dose}
+unique ( ToothGrowth$dose ) #find unique does values
+```
+
+The variable "dose" is indeed categorical in this context, as it has three distinct values.
+
+Let's compare the distributions growth by supplement and dose
+
+```{r boxplots}
+ggplot(aes(x = supp, y = len), data = ToothGrowth) +
+  geom_boxplot() +
+  facet_wrap(~ dose) +
+  labs(title = "Tooth Growth by Dose and Supplement", x = "Supplement", y = "Growth Length")
+```
+
+Growth appears to increase as the dosage increases, and the OJ supplement appears more effective in doeses of 0.5 and 1. The variability in the OJ supplement appears to decrease as the dosage increase, but variability for the VC supplement is reduces only for doses of 1.
+
+Let's summarise the data by supplement and dose
+
+```{r summary-data}
+ToothGrowthSummary <- ToothGrowth %>%
+  group_by (supp, dose) %>%
+  summarise (
+  MinGrowth = min(len),
+  MaxGrowth = max(len),
+  AverageGrowth = mean(len),
+  MedianGrowth = median(len),
+  GrowthIQR = IQR(len)
+  ) %>%
+  arrange (dose, supp)
+  
+  ToothGrowthSummary %>%
+  kable("html") %>%
+  kable_styling()
+```
+
+As we visually suspected, our summary shows growth increases as dosage increases, and the OJ supplement shows apparently more significant mean growth in the 0.5 and 1.0 doses.
+
+Now let's perform hypothesis testing to confirm what we've observed visually for tooth growth as it relates to supplement and dose.
+
+##Hypothesis Testing
+
+
