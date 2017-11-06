@@ -3,9 +3,9 @@ title: 'Statistical Inference Course Project Part 2: Basic Inferential Data Anal
 author: "David Kochar"
 date: '`r Sys.Date()`'
 output:
-  html_document:
-    keep_md: yes
   pdf_document: default
+  keep_md: yes
+  html_document: null
 ---
 
 ##Overview
@@ -22,10 +22,19 @@ Establish global options for the report output
 
 ```{r setupknitr}
 list.of.packages <- c("knitr")
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
-suppressWarnings ( suppressMessages ( library ( knitr ) ) )
-knitr::opts_chunk$set(fig.width=8, fig.height=4, fig.path='figures/StatisticalInferenceCourseProject/StatisticalInferenceCourseProjectPart1_', echo=TRUE, warning=FALSE, message=FALSE)
+new.packages <-
+list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages))
+install.packages(new.packages, repos = "http://cran.us.r-project.org")
+suppressWarnings (suppressMessages (library (knitr)))
+knitr::opts_chunk$set(
+fig.width = 8,
+fig.height = 4,
+fig.path = 'figures/StatisticalInferenceCourseProject/StatisticalInferenceCourseProjectPart1_',
+echo = TRUE,
+warning = FALSE,
+message = FALSE
+)
 ```
 
 ### Prepare Workspace and Load Libraries
@@ -34,28 +43,34 @@ Clear any existing variables from the workspace, set the working directory, and 
 
 ```{r load-packages}
 #Clear variables
-rm ( list = ls ( all = TRUE ) )
+rm (list = ls (all = TRUE))
 #Get and set working directory
-setwd ( getwd ( ) )
+setwd (getwd ())
 #Check installed status of requried packages, and install if necessary
-list.of.packages <- c( "ggplot2", "dplyr", "kableExtra" )
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
-suppressWarnings ( suppressMessages ( library ( ggplot2 ) ) )
-suppressWarnings ( suppressMessages ( library ( dplyr ) ) )
-suppressWarnings ( suppressMessages ( library ( kableExtra ) ) )
+list.of.packages <- c("ggplot2", "dplyr", "kableExtra", "statsr")
+new.packages <-
+list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages))
+install.packages(new.packages, repos = "http://cran.us.r-project.org")
+suppressWarnings (suppressMessages (library (ggplot2)))
+suppressWarnings (suppressMessages (library (dplyr)))
+suppressWarnings (suppressMessages (library (kableExtra)))
+suppressWarnings (suppressMessages (library (statsr)))
 ```
 ### Load Data
+
+Load the ToothGrowth data set.
+
 ```{r load-data}
-data ( ToothGrowth ) #load the ToothGrowth data set
+data ( ToothGrowth ) #Load the ToothGrowth data set
 ```
 
 ##Exploratory Data Analysis
 
-Let's get a feel for our data set by determining the data types and any factor levels
+Let's get a feel for our data set by determining the data types and any factor levels.
 
 ```{r describe-data}
-str ( ToothGrowth ) #load the ToothGrowth data set
+str ( ToothGrowth ) #Describe the ToothGrowth data set
 ```
 It appears that "dose" is actually a categorical variable in this context. Let's determine if the values are discrete.
 
@@ -63,23 +78,33 @@ It appears that "dose" is actually a categorical variable in this context. Let's
 unique ( ToothGrowth$dose ) #find unique does values
 ```
 
-The variable "dose" is indeed categorical in this context, as it has three distinct values.
+The variable "dose" is indeed categorical in this context, as it has three distinct values. Let's create a new version of ToothGrowth, ToothGrowth2, where we will coerce dose to be a factor variable.
 
-Let's compare the distributions growth by supplement and dose
+```{r coerce-dose}
+ToothGrowth2 <-
+  as.data.frame (
+  ToothGrowth,
+  supp = ToothGrowth$supp,
+  dose = as.factor(ToothGrowth$dose),
+  len = ToothGrowth$len
+  ) #select the columns from ToothGrowth, but coerce dose to a factor variable
+```
+
+Let's compare the distributions growth by supplement and dose.
 
 ```{r boxplots}
-ggplot(aes(x = supp, y = len), data = ToothGrowth) +
+ggplot(aes(x = supp, y = len), data = ToothGrowth2) +
   geom_boxplot() +
-  facet_wrap(~ dose) +
+  facet_wrap( ~ dose) +
   labs(title = "Tooth Growth by Dose and Supplement", x = "Supplement", y = "Growth Length")
 ```
 
-Growth appears to increase as the dosage increases, and the OJ supplement appears more effective in doeses of 0.5 and 1. The variability in the OJ supplement appears to decrease as the dosage increase, but variability for the VC supplement is reduces only for doses of 1.
+Growth appears to increase as the dosage increases, and the OJ supplement appears more effective in doeses of 0.5 and 1. The variability in the OJ supplement appears to decrease as the dosage increase, but variability for the VC supplement is reduced only for doses of 1.
 
-Let's summarise the data by supplement and dose
+Let's summarise the data by supplement and dose.
 
 ```{r summary-data}
-ToothGrowthSummary <- ToothGrowth %>%
+ToothGrowthSummary <- ToothGrowth2 %>%
   group_by (supp, dose) %>%
   summarise (
   MinGrowth = min(len),
@@ -90,6 +115,7 @@ ToothGrowthSummary <- ToothGrowth %>%
   ) %>%
   arrange (dose, supp)
   
+  suppressWarnings (suppressMessages (library (kableExtra)))
   ToothGrowthSummary %>%
   kable("html") %>%
   kable_styling()
@@ -101,4 +127,154 @@ Now let's perform hypothesis testing to confirm what we've observed visually for
 
 ##Hypothesis Testing
 
+We will first test significance for supplement as it relates to tooth growth
 
+###Supplement Significance
+
+We want to know if there is a statistically significant difference in tooth growth between the two supplements, OJ and VC. We will perform a two-sided t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing supplements, and our alternative hypothesis is that there is a difference.
+
+We will test for significance at each dose level, so we will need to split the data into three sets, one for each dose level.
+
+```{r split-data-into-dose-levels}
+HalfDose <- ToothGrowth2 %>% filter (dose == "0.5")
+FullDose <- ToothGrowth2 %>% filter (dose == "1")
+DoubleDose <- ToothGrowth2 %>% filter (dose == "2")
+```
+
+####Dose of 0.5 Significance Test
+
+For our supplement testing, we first test our dose level of 0.5 for significance.
+
+```{r HalfDose-t-test}
+t.test(
+  len ~ supp,
+  data = HalfDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is statisically significant difference between the tooth growth means of each supplement at the 0.5 dose level.
+
+####Dose of 1 Significance Test
+
+For our supplement testing, we next test our dose level of 1 for significance.
+
+```{r FullDose-t-test}
+t.test(
+  len ~ supp,
+  data = FullDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is statisically significant difference between the tooth growth means of each supplement at the 1 dose level.
+
+####Dose of 2 Significance Test
+
+For our supplement testing, we finally test our dose level of 2 for significance.
+
+```{r DoubleDose-t-test}
+t.test(
+  len ~ supp,
+  data = DoubleDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval, we fail to reject the null hypothesis as our p-value is not less than 0.05. Thus, we conclude there is no statisically significant difference between the tooth growth means of each supplement at the 2 dose level.
+
+###Dose Significance
+
+We want to know if there is a statistically significant difference in tooth growth between dose levels. We will perform a two-sided t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing dose levels, and our alternative hypothesis is that there is a difference.
+
+Since we have three different dose levels, we will have to compare these dose levels in paired permutations. So, we will compare 0.5 & 1, 0.5 & 2, and 1 & 2. We will need to split our data into three sets for each paired permutation.
+
+```{r split-data-into-dose-pairs}
+HalfandFullDose <- ToothGrowth2 %>% filter (dose %in% c("0.5", "1"))
+HalfandDoubleDose <-ToothGrowth2 %>% filter (dose %in% c("0.5", "2"))
+FullandDoubleDose <- ToothGrowth2 %>% filter (dose %in% c("1", "2"))
+```
+####Compare a Dose of 0.5 to a Dose of 1
+
+Let's first test for sigificance between a dose of 0.5 and a Dose of 1.
+
+```{r HalfandFullDose-t-test}
+t.test(
+  len ~ dose,
+  data = HalfandFullDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval when comparing a dose of 0.5 to a Dose of 1, we reject the null hypothesis as the p-value is less than 0.05. Thus, there is a statiscally significant difference between tooth growth when comparing these doses.
+
+####Compare a Dose of 0.5 to a Dose of 2
+
+Next, let's test for sigificance between a dose of 0.5 and a Dose of 2.
+
+```{r HalfandDoubleDose-t-test}
+t.test(
+  len ~ dose,
+  data = HalfandDoubleDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval when comparing a dose of 0.5 to a Dose of 2, we reject the null hypothesis as the p-value is less than 0.05. Thus, there is a statiscally significant difference between tooth growth when comparing these doses.
+
+####Compare a Dose of 1 to a Dose of 2
+
+Finally, let's test for sigificance between a dose of 1 and a Dose of 2.
+
+```{r FullandDoubleDose-t-test}
+t.test(
+  len ~ dose,
+  data = FullandDoubleDose,
+  alternative = "two.sided",
+  mu = 0,
+  paired = F,
+  var.equal = FALSE,
+  conf.level = 0.95
+  )
+```
+
+Using a 95% confidence interval when comparing a dose of 1 to a Dose of 2, we reject the null hypothesis as the p-value is less than 0.05. Thus, there is a statiscally significant difference between tooth growth when comparing these doses.
+
+##Conclusions and Assumptions
+
+###Conclusions
+
+When considering the multi-variate effect of dose size when comparing the independent means of supplement type, we see a significantly higher tooth growth effect with the OJ supplement at doses of 0.5 and 1. This is a counter-intuitive effect as one would expect more tooth growth at a higher dose.
+
+As for dose levels, there is a statisically significant tooth growth effect when comparing each dose level to the other dose levels.
+
+###Assumptions
+
+Several assumptions were made for the stated conclusions. These assumptions are:
+
+* The tooth growth variable has a continuous scale
+* The tooth growth observations are independent of each other
+* The tooth growth variable follows a normal distribution
+* The variance between supplements is unequal
+* The variance between dose levels is unequal
+* The data controls for confounding variables
