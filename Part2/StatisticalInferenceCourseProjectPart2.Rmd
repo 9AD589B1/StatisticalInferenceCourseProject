@@ -115,10 +115,10 @@ ToothGrowthSummary <- ToothGrowth2 %>%
   ) %>%
   arrange (dose, supp)
   
-  suppressWarnings (suppressMessages (library (kableExtra)))
-  ToothGrowthSummary %>%
-  kable("html") %>%
-  kable_styling()
+ suppressWarnings (suppressMessages (library (kableExtra)))
+ ToothGrowthSummary %>%
+ kable("html") %>%
+ kable_styling()
 ```
 
 As we visually suspected, our summary shows growth increases as dosage increases, and the OJ supplement shows apparently more significant mean growth in the 0.5 and 1.0 doses.
