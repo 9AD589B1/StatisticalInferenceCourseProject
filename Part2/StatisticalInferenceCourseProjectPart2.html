@@ -211,10 +211,10 @@ suppressWarnings (suppressMessages (library (statsr)))</code></pre>
   ) %&gt;%
   arrange (dose, supp)
   
-  suppressWarnings (suppressMessages (library (kableExtra)))
-  ToothGrowthSummary %&gt;%
-  kable(&quot;html&quot;) %&gt;%
-  kable_styling()</code></pre>
+ suppressWarnings (suppressMessages (library (kableExtra)))
+ ToothGrowthSummary %&gt;%
+ kable(&quot;html&quot;) %&gt;%
+ kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -403,7 +403,7 @@ DoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose == &quot;2&quot;)</code></pre>
   data = HalfDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -428,7 +428,7 @@ DoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose == &quot;2&quot;)</code></pre>
   data = FullDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -453,7 +453,7 @@ DoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose == &quot;2&quot;)</code></pre>
   data = DoubleDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -486,7 +486,7 @@ FullandDoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose %in% c(&quot;1&quot;, &
   data = HalfandFullDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -511,7 +511,7 @@ FullandDoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose %in% c(&quot;1&quot;, &
   data = HalfandDoubleDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -536,7 +536,7 @@ FullandDoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose %in% c(&quot;1&quot;, &
   data = FullandDoubleDose,
   alternative = &quot;two.sided&quot;,
   mu = 0,
-  paired = F,
+  paired = FALSE,
   var.equal = FALSE,
   conf.level = 0.95
   )</code></pre>
@@ -559,7 +559,7 @@ FullandDoubleDose &lt;- ToothGrowth2 %&gt;% filter (dose %in% c(&quot;1&quot;, &
 <h2>Conclusions and Assumptions</h2>
 <div id="conclusions" class="section level3">
 <h3>Conclusions</h3>
-<p>When considering the multi-variate effect of dose size when comparing the independent means of supplement type, we see a significantly higher tooth growth effect with the OJ supplement at doses of 0.5 and 1. This is a counter-intuitive effect as one would expect more tooth growth at a higher dose.</p>
+<p>When considering the multi-variate effect of dose size when comparing the independent means of supplement type, we see a significantly higher tooth growth effect with the OJ supplement at doses of 0.5 and 1. This is a counter-intuitive effect as one would expect significantly more tooth growth at higher doses, including a dose of 2.</p>
 <p>As for dose levels, there is a statisically significant tooth growth effect when comparing each dose level to the other dose levels.</p>
 </div>
 <div id="assumptions" class="section level3">
