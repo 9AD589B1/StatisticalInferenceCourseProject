@@ -3,9 +3,9 @@ title: 'Statistical Inference Course Project Part 2: Basic Inferential Data Anal
 author: "David Kochar"
 date: '`r Sys.Date()`'
 output:
-  pdf_document: default
-  keep_md: yes
   html_document: null
+  keep_md: yes
+  pdf_document: default
 ---
 
 ##Overview
@@ -39,7 +39,7 @@ message = FALSE
 
 ### Prepare Workspace and Load Libraries
 
-Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary
+Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary.
 
 ```{r load-packages}
 #Clear variables
@@ -72,7 +72,7 @@ Let's get a feel for our data set by determining the data types and any factor l
 ```{r describe-data}
 str ( ToothGrowth ) #Describe the ToothGrowth data set
 ```
-It appears that "dose" is actually a categorical variable in this context. Let's determine if the values are discrete.
+It appears that "dose" is actually a categorical variable in this context. Let's determine if its values are discrete.
 
 ```{r unique-dose}
 unique ( ToothGrowth$dose ) #find unique does values
@@ -90,7 +90,7 @@ ToothGrowth2 <-
   ) #select the columns from ToothGrowth, but coerce dose to a factor variable
 ```
 
-Let's compare the distributions growth by supplement and dose.
+Let's compare the growth distributions by supplement and dose.
 
 ```{r boxplots}
 ggplot(aes(x = supp, y = len), data = ToothGrowth2) +
@@ -99,7 +99,7 @@ ggplot(aes(x = supp, y = len), data = ToothGrowth2) +
   labs(title = "Tooth Growth by Dose and Supplement", x = "Supplement", y = "Growth Length")
 ```
 
-Growth appears to increase as the dosage increases, and the OJ supplement appears more effective in doeses of 0.5 and 1. The variability in the OJ supplement appears to decrease as the dosage increase, but variability for the VC supplement is reduced only for doses of 1.
+Growth appears to increase as the dosage increases, and the OJ supplement appears more effective in doeses of 0.5 and 1. The variability in the OJ supplement appears to decrease as the dosage increases, but variability for the VC supplement is reduced only for doses of 1.
 
 Let's summarise the data by supplement and dose.
 
@@ -115,24 +115,24 @@ ToothGrowthSummary <- ToothGrowth2 %>%
   ) %>%
   arrange (dose, supp)
   
- ToothGrowthSummary
- #suppressWarnings (suppressMessages (library (kableExtra)))
- #ToothGrowthSummary %>%
- #kable("html") %>%
- #kable_styling()
+ #ToothGrowthSummary
+ suppressWarnings (suppressMessages (library (kableExtra)))
+ ToothGrowthSummary %>%
+ kable("html") %>%
+ kable_styling()
 ```
 
-As we visually suspected, our summary shows growth increases as dosage increases, and the OJ supplement shows apparently more significant mean growth in the 0.5 and 1.0 doses.
+As we visually suspected, our summary shows that growth increases as dosage increases, and the OJ supplement shows apparently more significant mean growth in the 0.5 and 1.0 doses.
 
-Now let's perform hypothesis testing to confirm what we've observed visually for tooth growth as it relates to supplement and dose.
+Now, let's perform hypothesis testing to confirm what we've observed visually for tooth growth as it relates to supplement and dose.
 
 ##Hypothesis Testing
 
-We will first test significance for supplement as it relates to tooth growth
+We will first test significance for supplement as it relates to tooth growth.
 
 ###Supplement Significance
 
-We want to know if there is a statistically significant difference in tooth growth between the two supplements, OJ and VC. We will perform a two-sided t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing supplements, and our alternative hypothesis is that there is a difference.
+We want to know if there is a statistically significant difference in tooth growth between the two supplements, OJ and VC. We will perform a two-tailed t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing supplements, and our alternative hypothesis is that there is a difference.
 
 We will test for significance at each dose level, so we will need to split the data into three sets, one for each dose level.
 
@@ -158,7 +158,7 @@ t.test(
   )
 ```
 
-Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is statisically significant difference between the tooth growth means of each supplement at the 0.5 dose level.
+Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is a statisically significant difference between the tooth growth means of each supplement at the 0.5 dose level.
 
 ####Dose of 1 Significance Test
 
@@ -176,7 +176,7 @@ t.test(
   )
 ```
 
-Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is statisically significant difference between the tooth growth means of each supplement at the 1 dose level.
+Using a 95% confidence interval, we reject the null hypothesis as our p-value is less than 0.05. Thus, we conclude there is a statisically significant difference between the tooth growth means of each supplement at the 1 dose level.
 
 ####Dose of 2 Significance Test
 
@@ -194,11 +194,11 @@ t.test(
   )
 ```
 
-Using a 95% confidence interval, we fail to reject the null hypothesis as our p-value is not less than 0.05. Thus, we conclude there is no statisically significant difference between the tooth growth means of each supplement at the 2 dose level.
+Using a 95% confidence interval, we fail to reject the null hypothesis as our p-value is not less than 0.05. Thus, we conclude there is not a statisically significant difference between the tooth growth means of each supplement at the 2 dose level.
 
 ###Dose Significance
 
-We want to know if there is a statistically significant difference in tooth growth between dose levels. We will perform a two-sided t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing dose levels, and our alternative hypothesis is that there is a difference.
+We want to know if there is a statistically significant difference in tooth growth between dose levels. We will perform a two-tailed t-test to compare independent means. Our null hypothesis is that there is no difference in the tooth growth length means when comparing dose levels, and our alternative hypothesis is that there is a difference.
 
 Since we have three different dose levels, we will have to compare these dose levels in paired permutations. So, we will compare 0.5 & 1, 0.5 & 2, and 1 & 2. We will need to split our data into three sets for each paired permutation.
 
@@ -265,7 +265,7 @@ Using a 95% confidence interval when comparing a dose of 1 to a Dose of 2, we re
 
 ###Conclusions
 
-When considering the multi-variate effect of dose size when comparing the independent means of supplement type, we see a significantly higher tooth growth effect with the OJ supplement at doses of 0.5 and 1. This is a counter-intuitive effect as one would expect significantly more tooth growth at higher doses, including a dose of 2.
+When considering the multi-variate effect of dose size when comparing the independent means of supplement type, we see a significantly higher tooth growth effect with the OJ supplement at doses of 0.5 and 1. This is a counter-intuitive effect as one would expect significantly more tooth growth as dosage increases, including increase the dose from 1 to 2.
 
 As for dose levels, there is a statisically significant tooth growth effect when comparing each dose level to the other dose levels.
 
