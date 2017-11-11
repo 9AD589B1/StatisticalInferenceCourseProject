@@ -4,7 +4,7 @@ David Kochar
 
 ##Overview
 
-This report will investigate the exponential distribution in R and compare it to the Central Limit Theorem. We will investigate the normality of means from multiple, randomly generated exponential means. Accordint to the Central Limit Theorem, We expect the distribution of our randomly generated exponential means to be normal.
+This report will investigate the exponential distribution in R and compare it to the Central Limit Theorem. We will investigate the normality of means from multiple, randomly generated exponential means. According to the Central Limit Theorem, we expect the distribution of our randomly generated exponential means to be normal.
 
 ## Setup
 
@@ -12,7 +12,7 @@ We will first prepare the workspace environment by setting global options, and i
 
 ### Set Global Options
 
-Establish global options for the report output
+Establish global options for the report output.
 
 
 ```r
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(fig.width=8, fig.height=4, fig.path='figures/StatisticalIn
 
 ### Prepare Workspace and Load Libraries
 
-Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary
+Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary.
 
 
 ```r
@@ -101,7 +101,7 @@ qqline(ExpMatrixMeans$ExpMeans) #plot the normality line
 
 Again we can see very normal behavior from our sample means, as our sample means distribution closely fits the normal, theoretical quantile modeled line.
 
-###Comparison of the Distribution centers
+###Comparison of the Distribution Centers
 
 Let's compare distribution centers between our theoretical mean and our sample means.
 
@@ -111,11 +111,11 @@ TheoreticalMean <- 1 / l #The theoretical mean is 1 / lambda
 TrialsMean <- round ( mean ( ExpMatrixMeans$ExpMeans ), 2 ) #Compute the mean of sample means from the simulated trials
 ```
 
-Our theoretical mean is 5, and the mean of our sample means is 5.01. Since these means are very close, we demonstrate the center of means from our multiple trials is virtually the same as the theoretical mean. This behavior is also expected according to the Central Limit Theorem.
+Our theoretical mean is 5, and the mean of our sample means is 5.01. Since these means are very close, we've demonstrate the center of means from our multiple trials is virtually the same as the theoretical mean. This behavior is also expected according to the Central Limit Theorem.
 
 ##Sample Variance Versus Theoretical Variance
 
-To assess the sample Variance versus the theoretical variance, Let's compare the standard deviations of our sample means to the theoretical standard deviation
+To assess the sample variance versus the theoretical variance, let's compare the standard deviations of our sample means to the theoretical standard deviation.
 
 
 ```r

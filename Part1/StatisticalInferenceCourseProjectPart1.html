@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Kochar" />
 
-<meta name="date" content="2017-11-05" />
+<meta name="date" content="2017-11-11" />
 
 <title>Statistical Inference Course Project Part 1: Simulation Exercise</title>
 
@@ -119,21 +119,21 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Statistical Inference Course Project Part 1: Simulation Exercise</h1>
 <h4 class="author"><em>David Kochar</em></h4>
-<h4 class="date"><em>2017-11-05</em></h4>
+<h4 class="date"><em>2017-11-11</em></h4>
 
 </div>
 
 
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>This report will investigate the exponential distribution in R and compare it to the Central Limit Theorem. We will investigate the normality of means from multiple, randomly generated exponential means. Accordint to the Central Limit Theorem, We expect the distribution of our randomly generated exponential means to be normal.</p>
+<p>This report will investigate the exponential distribution in R and compare it to the Central Limit Theorem. We will investigate the normality of means from multiple, randomly generated exponential means. According to the Central Limit Theorem, we expect the distribution of our randomly generated exponential means to be normal.</p>
 </div>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
 <p>We will first prepare the workspace environment by setting global options, and installing and loading required libraries.</p>
 <div id="set-global-options" class="section level3">
 <h3>Set Global Options</h3>
-<p>Establish global options for the report output</p>
+<p>Establish global options for the report output.</p>
 <pre class="r"><code>list.of.packages &lt;- c(&quot;knitr&quot;)
 new.packages &lt;- list.of.packages[!(list.of.packages %in% installed.packages()[,&quot;Package&quot;])]
 if(length(new.packages)) install.packages(new.packages, repos = &quot;http://cran.us.r-project.org&quot;)
@@ -142,7 +142,7 @@ knitr::opts_chunk$set(fig.width=8, fig.height=4, fig.path='figures/StatisticalIn
 </div>
 <div id="prepare-workspace-and-load-libraries" class="section level3">
 <h3>Prepare Workspace and Load Libraries</h3>
-<p>Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary</p>
+<p>Clear any existing variables from the workspace, set the working directory, and install required libraries if neccessary.</p>
 <pre class="r"><code>#Clear variables
 rm ( list = ls ( all = TRUE ) )
 #Get and set working directory
@@ -197,16 +197,16 @@ qqline(ExpMatrixMeans$ExpMeans) #plot the normality line</code></pre>
 <p>Again we can see very normal behavior from our sample means, as our sample means distribution closely fits the normal, theoretical quantile modeled line.</p>
 </div>
 <div id="comparison-of-the-distribution-centers" class="section level3">
-<h3>Comparison of the Distribution centers</h3>
+<h3>Comparison of the Distribution Centers</h3>
 <p>Let’s compare distribution centers between our theoretical mean and our sample means.</p>
 <pre class="r"><code>TheoreticalMean &lt;- 1 / l #The theoretical mean is 1 / lambda 
 TrialsMean &lt;- round ( mean ( ExpMatrixMeans$ExpMeans ), 2 ) #Compute the mean of sample means from the simulated trials</code></pre>
-<p>Our theoretical mean is 5, and the mean of our sample means is 5.01. Since these means are very close, we demonstrate the center of means from our multiple trials is virtually the same as the theoretical mean. This behavior is also expected according to the Central Limit Theorem.</p>
+<p>Our theoretical mean is 5, and the mean of our sample means is 5.01. Since these means are very close, we’ve demonstrate the center of means from our multiple trials is virtually the same as the theoretical mean. This behavior is also expected according to the Central Limit Theorem.</p>
 </div>
 </div>
 <div id="sample-variance-versus-theoretical-variance" class="section level2">
 <h2>Sample Variance Versus Theoretical Variance</h2>
-<p>To assess the sample Variance versus the theoretical variance, Let’s compare the standard deviations of our sample means to the theoretical standard deviation</p>
+<p>To assess the sample variance versus the theoretical variance, let’s compare the standard deviations of our sample means to the theoretical standard deviation.</p>
 <pre class="r"><code>TheoreticalSD &lt;- ( 1 / l ) / sqrt ( n ) #The theoretical standard deviation is ( 1 / l ) / sqrt ( n )
 TrialsSD &lt;- sd ( ExpMatrixMeans$ExpMeans ) #calculate the standard deviation of the sample means</code></pre>
 <p>Our theoretical standard deviation of the sample means is 0.7905694, and the standard deviation of our sample means is 0.7802751. Yet again, this behavior is expected according to the Central Limit Theorem - the variance of our sample means should be virtually identital to the theoretical standard deviation of the sample.</p>
